@@ -1,0 +1,75 @@
+HISTSIZE=500
+HISTFILESIZE=500000
+sleep 0.25s
+clear
+alias ncdu-storage='xzcat $HOME/.ncdu-storage.xz |ncdu -eLf- --color dark'
+alias ncdu-termux='xzcat $HOME/.ncdu-termux.xz |ncdu -eLf- --color dark'
+alias ncdu-save='ncdu -eLo- /storage/emulated/0|xz -9 > $HOME/.ncdu-storage.xz && ncdu -eLo- /data/data/com.termux/files | xz -9 > $HOME/.ncdu-termux.xz'
+alias ncdu='ncdu --color dark'
+eval "$(zoxide init bash)"
+EDITOR=nano;export EDITOR
+alias ubuntu='proot-distro login ubuntu'
+PIPX_BIN_DIR=$HOME/.local/pipx/bin; export PIPX_BIN_DIR
+GOPATH=$HOME/.go;export GOPATH
+PATH=$PIPX_BIN_DIR:$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$GOPATH/bin:$HOME/.local/share/gem/ruby/3.0.0/bin:$PATH;export PATH
+
+# pip bash completion start
+_pip_completion()
+{
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
+}
+complete -o default -F _pip_completion /data/data/com.termux/files/usr/bin/python3 -m pip
+# pip bash completion end
+
+eval "$(register-python-argcomplete pipx)"
+
+neofetch
+
+# starship init bash start
+            __main() {
+                local major="${BASH_VERSINFO[0]}"
+                local minor="${BASH_VERSINFO[1]}"
+
+                if ((major > 4)) || { ((major == 4)) && ((minor >= 1)); }; then
+                    source <(/data/data/com.termux/files/home/.local/bin/starship init bash --print-full-init)  2> /dev/null
+                else
+                    source /dev/stdin <<<"$(/data/data/com.termux/files/home/.local/bin/starship init bash --print-full-init)"
+                fi
+            }
+            __main
+            unset -f __main
+# starship init bash end
+eval "$(starship completions bash)"
+alias which='command -v'
+
+# lsx
+#source ~/.config/lsx/lsx.sh
+
+function bins() {
+pushd $HOME 2>&1 > /dev/null
+    exa $(echo $PATH|tr ':' '\n'|fgrep home|sed -E 's/^.*?home\///g') $@
+popd 2>&1 > /dev/null
+}
+alias tcg=termux-clipboard-get
+#eval "$(mcfly -d init bash)"
+function ddg() {
+  elinks "ddg $*"
+}
+alias go=colorgo
+source $HOME/src/bsh/go-pkg-complete/go-pkg-complete.bash.inc
+#alias man="TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER=less man"
+#MANPAGER='less -s -M +Gg'
+alias man='TERMINFO=~/.terminfo/ LESS=C TERM=mostlike PAGER="less -s -M" man'
+alias t-apt-repo=termux-apt-repo
+alias t-create-package=termux-create-package
+PIPX_BIN_DIR=$HOME/.local/pipx/bin; export PIPX_BIN_DIR
+
+#function set_win_title(){
+#	echo -ne "\033]0; ~/$(realpath --relative-to="$HOME" .) \007"
+#}
+#starship_precmd_user_func="set_win_title"
+shopt -s extglob
+trap 'printf "\033]0;%s\007" "$(realpath --relative-to="$HOME" .|sed -E "s/^\.$/~\//") $(history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")" >&2' DEBUG
+#trap 'printf "\033]0;%s\007" "$(realpath --relative-to="$HOME" .|sed -E "s/^\.$/~\//") ${BASH_COMMAND#starship_precmd}" >&2' DEBUG

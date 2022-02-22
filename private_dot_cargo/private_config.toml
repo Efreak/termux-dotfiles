@@ -1,0 +1,7 @@
+[build]
+rustc-wrapper = "/data/data/com.termux/files/home/.cargo/bin/sccache"
+pipelining = true
+incremental = true
+
+[doc]
+browser = "elinks"
